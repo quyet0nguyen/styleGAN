@@ -102,7 +102,7 @@ def train(args, dataset, generator, discriminator, epoch, step):
                     'd_optimizer': d_optimizer.state_dict(),
                     'g_running': g_running.state_dict(),
                 },
-                f'checkpoint/train_step-{ckpt_step}-{i+1}.model',
+                f'/content/drive/MyDrive/styleGAN/checkpoint/train_step-{ckpt_step}-{i+1}.model',
             )
 
             adjust_lr(g_optimizer, args.lr.get(resolution, 0.001))
@@ -213,7 +213,7 @@ def train(args, dataset, generator, discriminator, epoch, step):
             requires_grad(generator, False)
             requires_grad(discriminator, True)
 
-        if (i + 1) % 10000 == 0:
+        if (i + 1) % 1000 == 0:
             images = []
 
             gen_i, gen_j = args.gen_sample.get(resolution, (10, 5))
@@ -228,13 +228,13 @@ def train(args, dataset, generator, discriminator, epoch, step):
 
             utils.save_image(
                 torch.cat(images, 0),
-                f'sample/{str(i + 1).zfill(6)}.png',
+                f'/content/drive/MyDrive/styleGAN/sample/{str(i + 1).zfill(6)}.png',
                 nrow=gen_i,
                 normalize=True,
                 range=(-1, 1),
             )
 
-        if (i + 1) % 10000 == 0:
+        if (i + 1) % 1000 == 0:
             torch.save(
                 {
                     'generator': generator.module.state_dict(),
@@ -244,7 +244,7 @@ def train(args, dataset, generator, discriminator, epoch, step):
                     'g_running': g_running.state_dict(),
                     'epoch': i+1,
                     'step': step,
-                }, f'checkpoint/{str(i + 1).zfill(6)}.model'
+                }, f'/content/drive/MyDrive/styleGAN/checkpoint/{str(i + 1).zfill(6)}.model'
             )
 
         print(
