@@ -43,7 +43,7 @@ def adjust_lr(optimizer, lr):
         group['lr'] = lr * mult
 
 
-def train(args, dataset, generator, discriminator, epoch, step):
+def train(args, dataset, generator, discriminator, epoch, step, used_sample):
     resolution = 4 * 2 ** step
     loader = sample_data(
         dataset, args.batch.get(resolution, args.batch_default), resolution
@@ -61,7 +61,6 @@ def train(args, dataset, generator, discriminator, epoch, step):
     grad_loss_val = 0
 
     alpha = 0
-    used_sample = 0
 
     max_step = int(math.log2(args.max_size)) - 2
     final_progress = False
@@ -101,6 +100,9 @@ def train(args, dataset, generator, discriminator, epoch, step):
                     'g_optimizer': g_optimizer.state_dict(),
                     'd_optimizer': d_optimizer.state_dict(),
                     'g_running': g_running.state_dict(),
+                    'epoch': i+1,
+                    'step': step,
+                    'used_sample' : used_sample,
                 },
                 f'/content/drive/MyDrive/styleGAN/checkpoint/train_step-{ckpt_step}-{i+1}.model',
             )
@@ -244,6 +246,7 @@ def train(args, dataset, generator, discriminator, epoch, step):
                     'g_running': g_running.state_dict(),
                     'epoch': i+1,
                     'step': step,
+                    'used_sample' : used_sample,
                 }, f'/content/drive/MyDrive/styleGAN/checkpoint/{str(i + 1).zfill(6)}.model'
             )
 
@@ -313,6 +316,7 @@ if __name__ == '__main__':
     accumulate(g_running, generator.module, 0)
 
     epoch = 0
+    used_sample = 0
     step = int(math.log2(args.init_size)) - 2
 
     if args.ckpt is not None:
@@ -325,6 +329,7 @@ if __name__ == '__main__':
         d_optimizer.load_state_dict(ckpt['d_optimizer'])
         step = ckpt['step']
         epoch = ckpt['epoch']
+        used_sample = ckpt['used_sample']
 
     transform = transforms.Compose(
         [
@@ -348,4 +353,4 @@ if __name__ == '__main__':
 
     args.batch_default = 32
 
-    train(args, dataset, generator, discriminator,epoch, step)
+    train(args, dataset, generator, discriminator,epoch, step, used_sample)
