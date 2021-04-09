@@ -73,7 +73,7 @@ def train(args, dataset, generator, discriminator, epoch, step, used_sample):
         if (resolution == args.init_size and args.ckpt is None) or final_progress:
             alpha = 1
 
-        if used_sample > args.phase * 2:
+        if used_sample > (args.phase * 2):
             used_sample = 0
             step += 1
 
@@ -318,6 +318,7 @@ if __name__ == '__main__':
     epoch = 0
     used_sample = 0
     step = int(math.log2(args.init_size)) - 2
+    
 
     if args.ckpt is not None:
         ckpt = torch.load(args.ckpt)
@@ -343,7 +344,7 @@ if __name__ == '__main__':
 
     if args.sched:
         args.lr = {128: 0.0015, 256: 0.002, 512: 0.003, 1024: 0.003}
-        args.batch = {4: 512, 8: 256, 16: 128, 32: 64, 64: 32, 128: 32, 256: 32}
+        args.batch = {4: 512, 8: 256, 16: 128, 32: 64, 64: 32, 128: 32, 256: 16}
 
     else:
         args.lr = {}
