@@ -73,10 +73,10 @@ def style_mixing(generator, step, mean_style, n_source, n_target, device):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--size', type=int, default=1024, help='size of the image')
-    parser.add_argument('--n_row', type=int, default=3, help='number of rows of sample matrix')
-    parser.add_argument('--n_col', type=int, default=5, help='number of columns of sample matrix')
-    parser.add_argument('path', type=str, help='path to checkpoint file')
+    parser.add_argument('--size', type=int, default=256, help='size of the image')
+    parser.add_argument('--dir', type =str, default='/content/generate')
+    parser.add_argument('--amount', type=int, default = 10_000)
+    parser.add_argument('--path', type=str, help='path to checkpoint file')
     
     args = parser.parse_args()
     
@@ -90,11 +90,8 @@ if __name__ == '__main__':
 
     step = int(math.log(args.size, 2)) - 2
     
-    img = sample(generator, step, mean_style, args.n_row * args.n_col, device)
-    utils.save_image(img, 'sample.png', nrow=args.n_col, normalize=True, range=(-1, 1))
-    
-    for j in range(20):
-        img = style_mixing(generator, step, mean_style, args.n_col, args.n_row, device)
-        utils.save_image(
-            img, f'sample_mixing_{j}.png', nrow=args.n_col + 1, normalize=True, range=(-1, 1)
-        )
+    for i in range(args.amount):
+      img = sample(generator, step, mean_style, 1, device)
+      name = args.dir + '/' + 'sample' + str(i) + '.png'
+      utils.save_image(img, name, normalize=True, range=(-1, 1))
+      
